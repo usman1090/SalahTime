@@ -14,6 +14,8 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+
 Route::middleware(['auth'])->group(function () {
     
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -28,10 +30,21 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
-    Route::resource('/groups', GroupController::class);
-
     Route::post('/prayers/store', [PrayerController::class, 'store'])
         ->name('prayers.store');
+
+    Route::delete('/prayers/{prayerRecord}', [PrayerController::class, 'destroy'])
+    ->name('prayers.destroy');
+    
+    Route::get('/groups/join', [GroupController::class, 'joinForm'])
+    ->name('groups.join.form');
+
+    Route::post('/groups/join', [GroupController::class, 'join'])
+    ->name('groups.join');
+
+    Route::resource('/groups', GroupController::class);
+    
+    
 });
 
 require __DIR__.'/auth.php';
