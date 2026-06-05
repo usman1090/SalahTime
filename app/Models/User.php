@@ -46,4 +46,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function ownedGroups()
+    {
+        return $this->hasMany(Group::class, 'owner_id');
+    }
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_members')
+            ->withPivot('joined_at')
+            ->withTimestamps();
+    }
+
+    public function prayerRecords()
+    {
+        return $this->hasMany(PrayerRecord::class);
+    }
 }
