@@ -86,11 +86,21 @@
                                         @endphp
 
                                         <td class="p-3 border text-center">
-                                            <span class="inline-block px-3 py-1 rounded text-sm font-semibold {{ $badgeClass }}">
-                                                {{ $statusText }}
-                                            </span>
-                                        </td>
+                                        <span class="inline-block px-3 py-1 rounded text-sm font-semibold {{ $badgeClass }}">
+                                            {{ $statusText }}
+                                        </span>
 
+                                        @if($record && $record->image_path)
+                                            <a href="{{ asset('storage/' . $record->image_path) }}" target="_blank">
+                                                <img
+                                                    src="{{ asset('storage/' . $record->image_path) }}"
+                                                    class="mt-2 mx-auto rounded w-16 h-16 object-cover"
+                                                    alt="Prayer Proof"
+                                                >
+                                            </a>
+                                        @endif
+                                        </td>
+                                        
                                     @endforeach
                                 </tr>
 

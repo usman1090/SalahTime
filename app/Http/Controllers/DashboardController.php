@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PrayerRecord;
+use App\Services\StreakService;
 use App\Services\PrayerTimeService;
 
 class DashboardController extends Controller
 {
-     public function index(PrayerTimeService $prayerTimeService)
+     public function index(PrayerTimeService $prayerTimeService, StreakService $streakService)
     {
         $user = auth()->user();
 
@@ -52,7 +53,11 @@ class DashboardController extends Controller
             'late' => $monthlyRecords->where('status', 'late')->count(),
             'qaza' => $monthlyRecords->where('status', 'qaza')->count(),
             'missed' => $monthlyRecords->where('status', 'missed')->count(),
+            
         ];
+
+        $currentStreak = $streakService->getCurrentStreak($user->id);
+        $bestStreak = $streakService->getBestStreak($user->id);
 
         return view('dashboard', compact(
             'prayers',
@@ -61,7 +66,9 @@ class DashboardController extends Controller
             'missedCount',
             'groups',
             'prayerTimes',
-            'monthlyStats'
+            'monthlyStats',
+            'currentStreak',
+            'bestStreak'
         ));
     }
 }

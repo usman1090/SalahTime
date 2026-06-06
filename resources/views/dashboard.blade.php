@@ -102,11 +102,22 @@
                                 </p>
                             @endif
 
-                            <form method="POST" action="{{ route('prayers.store') }}" class="mt-4">
+                            @if($record && $record->image_path)
+                            <img
+                                src="{{ asset('storage/' . $record->image_path) }}"
+                                class="mt-3 rounded-lg w-full h-28 object-cover"
+                                alt="Prayer Proof"
+                            >
+                            @endif
+
+                            <form method="POST" action="{{ route('prayers.store') }}" enctype="multipart/form-data" class="mt-4">
                                 @csrf
 
                                 <input type="hidden" name="prayer_name" value="{{ $prayer }}">
-
+                                <input type="file" name="proof_image"accept="image/*" class="w-full text-sm mb-3"/>
+                                @error('proof_image')
+                                <p class="text-red-600 text-sm mb-2">{{ $message }}</p>
+                                @enderror
                                 <button class="w-full bg-blue-600 text-white px-3 py-2 rounded text-sm">
                                 Mark Prayer
                             </button>
@@ -209,10 +220,29 @@
             <h3 class="text-2xl font-bold text-red-600">{{ $monthlyStats['missed'] }}</h3>
         </div>
 
+        <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-gray-500">Current Streak</p>
+        <h2 class="text-3xl font-bold">
+            🔥 {{ $currentStreak }} Days
+        </h2>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-gray-500">Best Streak</p>
+        <h2 class="text-3xl font-bold">
+            🏆 {{ $bestStreak }} Days
+        </h2>
+    </div>
+
     </div>
 </div>
 
-        </div>
+    
 
-    </div>
+    
+
+    
+
+</div>
+</div>
 </x-app-layout>
