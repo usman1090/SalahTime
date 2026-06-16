@@ -1,248 +1,225 @@
 <x-app-layout>
+    @php
+        $completionPercent = round(($completedCount / 5) * 100);
+        $remainingCount = max(0, 5 - $completedCount - $missedCount);
+        $statusStyles = [
+            'on_time' => 'border-emerald-200 bg-emerald-50 text-emerald-800',
+            'late' => 'border-amber-200 bg-amber-50 text-amber-800',
+            'qaza' => 'border-orange-200 bg-orange-50 text-orange-800',
+            'missed' => 'border-rose-200 bg-rose-50 text-rose-800',
+            'default' => 'border-slate-200 bg-slate-50 text-slate-600',
+        ];
+    @endphp
+
     <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <section class="mb-8 rounded-2xl bg-slate-950 px-6 py-7 text-white shadow-xl shadow-slate-200 sm:px-8">
+                <div class="grid gap-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
+                    <div>
+                        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-teal-200">{{ now()->format('l, d M Y') }}</p>
+                        <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                            Assalamu Alaikum, {{ auth()->user()->name }}
+                        </h1>
+                        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
+                            Track today's Salah, review your monthly consistency, and keep your groups updated from one focused workspace.
+                        </p>
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <a href="{{ route('groups.index') }}" class="inline-flex items-center justify-center rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15">
+                                View Groups
+                            </a>
+                            <a href="{{ route('groups.create') }}" class="inline-flex items-center justify-center rounded-lg bg-teal-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-300">
+                                Create Group
+                            </a>
+                        </div>
+                    </div>
 
-            <div class="flex justify-between items-center mb-6">
+                    <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                        <div class="flex items-end justify-between gap-4">
+                            <div>
+                                <p class="text-sm text-slate-300">Today completed</p>
+                                <p class="mt-2 text-4xl font-semibold">{{ $completedCount }} / 5</p>
+                            </div>
+                            <p class="rounded-full bg-teal-400/15 px-3 py-1 text-sm font-semibold text-teal-200">{{ $completionPercent }}%</p>
+                        </div>
+                        <div class="mt-5 h-2 rounded-full bg-white/10">
+                            <div class="h-2 rounded-full bg-teal-300" style="width: {{ $completionPercent }}%"></div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+                            <div class="rounded-lg bg-white/5 p-3">
+                                <p class="text-slate-400">Remaining</p>
+                                <p class="mt-1 font-semibold text-white">{{ $remainingCount }}</p>
+                            </div>
+                            <div class="rounded-lg bg-white/5 p-3">
+                                <p class="text-slate-400">Missed</p>
+                                <p class="mt-1 font-semibold text-white">{{ $missedCount }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    <div>
-        <h1 class="text-2xl font-bold">
-            Assalamu Alaikum, {{ auth()->user()->name }}
-        </h1>
-
-        <p class="text-gray-500">
-            Track your Salah for today.
-        </p>
-    </div>
-
-    <div class="flex gap-3">
-
-        <a href="{{ route('groups.index') }}"
-           class="bg-blue-600 text-white px-4 py-2 rounded-lg">
-            Groups
-        </a>
-
-        <a href="{{ route('groups.create') }}"
-           class="bg-green-600 text-white px-4 py-2 rounded-lg">
-            Create Group
-        </a>
-
-    </div>
-
-</div>
             @if(session('success'))
-                <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+                <div class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
                     {{ session('success') }}
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <section class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
+                <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <p class="text-sm font-medium text-slate-500">Completed Today</p>
+                    <p class="mt-2 text-3xl font-semibold text-slate-950">{{ $completedCount }} / 5</p>
+                </div>
+                <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <p class="text-sm font-medium text-slate-500">Current Streak</p>
+                    <p class="mt-2 text-3xl font-semibold text-teal-800">{{ $currentStreak }} days</p>
+                </div>
+                <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <p class="text-sm font-medium text-slate-500">Best Streak</p>
+                    <p class="mt-2 text-3xl font-semibold text-slate-950">{{ $bestStreak }} days</p>
+                </div>
+                <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <p class="text-sm font-medium text-slate-500">Groups</p>
+                    <p class="mt-2 text-3xl font-semibold text-slate-950">{{ $groups->count() }}</p>
+                </div>
+            </section>
 
-                <div class="bg-white rounded-lg shadow p-5">
-                    <p class="text-gray-500">Completed Today</p>
-                    <h2 class="text-3xl font-bold">
-                        {{ $completedCount }} / 5
-                    </h2>
+            <section class="mb-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-950">Today's Prayers</h2>
+                        <p class="mt-1 text-sm text-slate-500">Upload proof and mark each prayer as completed for today.</p>
+                    </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow p-5">
-                    <p class="text-gray-500">Missed</p>
-                    <h2 class="text-3xl font-bold">
-                        {{ $missedCount }}
-                    </h2>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-5">
-                    <p class="text-gray-500">Date</p>
-                    <h2 class="text-3xl font-bold">
-                        {{ now()->format('d M') }}
-                    </h2>
-                </div>
-
-            </div>
-
-            <div class="bg-white rounded-lg shadow p-6 mb-8">
-
-                <h2 class="text-xl font-bold mb-4">
-                    Today's Prayers
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
                     @foreach($prayers as $prayer)
-
                         @php
                             $record = $todayRecords[$prayer] ?? null;
-
-                            $statusClass = match($record?->status) {
-                                'on_time' => 'bg-green-100 text-green-700',
-                                'late' => 'bg-yellow-100 text-yellow-700',
-                                'qaza' => 'bg-orange-100 text-orange-700',
-                                'missed' => 'bg-red-100 text-red-700',
-                                default => 'bg-gray-100 text-gray-600',
-                            };
-
-                            $statusText = $record
-                                ? ucfirst(str_replace('_', ' ', $record->status))
-                                : 'Not Marked';
+                            $statusText = $record ? ucfirst(str_replace('_', ' ', $record->status)) : 'Not Marked';
+                            $statusClass = $statusStyles[$record?->status] ?? $statusStyles['default'];
                         @endphp
 
-                        <div class="border rounded-lg p-4">
-
-                            <h3 class="text-lg font-bold capitalize mb-2">
-                                {{ $prayer }}
-                            </h3>
-
-                            <span class="inline-block px-3 py-1 rounded text-sm font-semibold {{ $statusClass }}">
-                                {{ $statusText }}
-                            </span>
-
-                            @if($record && $record->prayer_time)
-                                <p class="text-sm text-gray-500 mt-2">
-                                    {{ $record->prayer_time->format('h:i A') }}
-                                </p>
-                            @endif
+                        <article class="flex min-h-full flex-col rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <h3 class="text-lg font-semibold capitalize text-slate-950">{{ $prayer }}</h3>
+                                    @if($record && $record->prayer_time)
+                                        <p class="mt-1 text-sm text-slate-500">{{ $record->prayer_time->format('h:i A') }}</p>
+                                    @else
+                                        <p class="mt-1 text-sm text-slate-500">Awaiting update</p>
+                                    @endif
+                                </div>
+                                <span class="rounded-full border px-2.5 py-1 text-xs font-semibold {{ $statusClass }}">
+                                    {{ $statusText }}
+                                </span>
+                            </div>
 
                             @if($record && $record->image_path)
-                            <img
-                                src="{{ asset('storage/' . $record->image_path) }}"
-                                class="mt-3 rounded-lg w-full h-28 object-cover"
-                                alt="Prayer Proof"
-                            >
+                                <img
+                                    src="{{ asset('storage/' . $record->image_path) }}"
+                                    class="mt-4 h-28 w-full rounded-lg object-cover"
+                                    alt="Prayer proof"
+                                >
+                            @else
+                                <div class="mt-4 flex h-28 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white text-sm text-slate-400">
+                                    No proof uploaded
+                                </div>
                             @endif
 
                             <form method="POST" action="{{ route('prayers.store') }}" enctype="multipart/form-data" class="mt-4">
                                 @csrf
-
                                 <input type="hidden" name="prayer_name" value="{{ $prayer }}">
-                                <input type="file" name="proof_image"accept="image/*" class="w-full text-sm mb-3"/>
+                                <input type="file" name="proof_image" accept="image/*" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200">
                                 @error('proof_image')
-                                <p class="text-red-600 text-sm mb-2">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
                                 @enderror
-                                <button class="w-full bg-blue-600 text-white px-3 py-2 rounded text-sm">
-                                Mark Prayer
-                            </button>
+                                <button class="mt-3 w-full rounded-lg bg-teal-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-teal-800">
+                                    Mark Prayer
+                                </button>
                             </form>
 
                             @if($record)
                                 <form method="POST" action="{{ route('prayers.destroy', $record) }}" class="mt-2">
                                     @csrf
                                     @method('DELETE')
-
-                                    <button class="w-full bg-gray-200 text-gray-700 px-3 py-2 rounded text-sm">
+                                    <button class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
                                         Remove
                                     </button>
                                 </form>
                             @endif
-
-                        </div>
-
+                        </article>
                     @endforeach
-
                 </div>
-            </div>
+            </section>
 
-            <div class="bg-white rounded-lg shadow p-6 mb-8">
-
-            <h2 class="text-xl font-bold mb-4">
-                Today's Prayer Times
-            </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-
-            @foreach($prayers as $prayer)
-
-                <div class="border rounded-lg p-4 text-center">
-                    <h3 class="font-bold capitalize">
-                        {{ $prayer }}
-                    </h3>
-
-                    <p class="text-gray-600 mt-2">
-                        {{ \Carbon\Carbon::parse($prayerTimes->$prayer)->format('h:i A') }}
-                    </p>
-                </div>
-
-            @endforeach
-
-                </div>
-
-        </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-bold mb-4">
-                    My Groups
-                </h2>
-
-                @forelse($groups as $group)
-                    <div class="border-b py-3">
-                        <h3 class="font-semibold">{{ $group->name }}</h3>
-                        <p class="text-sm text-gray-500">
-                            Invite Code: {{ $group->invite_code }}
-                        </p>
+            <div class="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+                <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                    <h2 class="text-xl font-semibold text-slate-950">Today's Prayer Times</h2>
+                    <div class="mt-5 space-y-3">
+                        @foreach($prayers as $prayer)
+                            <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+                                <span class="font-semibold capitalize text-slate-800">{{ $prayer }}</span>
+                                <span class="text-sm font-medium text-slate-600">{{ \Carbon\Carbon::parse($prayerTimes->$prayer)->format('h:i A') }}</span>
+                            </div>
+                        @endforeach
                     </div>
-                @empty
-                    <p class="text-gray-500">
-                        You have not joined any groups yet.
-                    </p>
-                @endforelse
+                </section>
+
+                <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-xl font-semibold text-slate-950">My Groups</h2>
+                            <p class="mt-1 text-sm text-slate-500">Invite codes and shared accountability spaces.</p>
+                        </div>
+                        <a href="{{ route('groups.join.form') }}" class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                            Join
+                        </a>
+                    </div>
+
+                    <div class="mt-5 divide-y divide-slate-200">
+                        @forelse($groups as $group)
+                            <div class="py-4 first:pt-0 last:pb-0">
+                                <h3 class="font-semibold text-slate-950">{{ $group->name }}</h3>
+                                <p class="mt-1 text-sm text-slate-500">Invite Code: <span class="font-mono font-semibold text-slate-700">{{ $group->invite_code }}</span></p>
+                            </div>
+                        @empty
+                            <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-500">
+                                You have not joined any groups yet.
+                            </div>
+                        @endforelse
+                    </div>
+                </section>
             </div>
 
+            <section class="mt-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                <div class="mb-5">
+                    <h2 class="text-xl font-semibold text-slate-950">This Month's Stats</h2>
+                    <p class="mt-1 text-sm text-slate-500">A quick view of your prayer record for {{ now()->format('F') }}.</p>
+                </div>
 
-            <div class="bg-white rounded-lg shadow p-6 mt-8">
-
-    <h2 class="text-xl font-bold mb-4">
-        This Month's Stats
-    </h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-
-        <div class="border rounded-lg p-4 text-center">
-            <p class="text-gray-500">Total</p>
-            <h3 class="text-2xl font-bold">{{ $monthlyStats['total'] }}</h3>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-sm font-medium text-slate-500">Total</p>
+                        <p class="mt-2 text-2xl font-semibold text-slate-950">{{ $monthlyStats['total'] }}</p>
+                    </div>
+                    <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                        <p class="text-sm font-medium text-emerald-700">On Time</p>
+                        <p class="mt-2 text-2xl font-semibold text-emerald-900">{{ $monthlyStats['on_time'] }}</p>
+                    </div>
+                    <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                        <p class="text-sm font-medium text-amber-700">Late</p>
+                        <p class="mt-2 text-2xl font-semibold text-amber-900">{{ $monthlyStats['late'] }}</p>
+                    </div>
+                    <div class="rounded-lg border border-orange-200 bg-orange-50 p-4">
+                        <p class="text-sm font-medium text-orange-700">Qaza</p>
+                        <p class="mt-2 text-2xl font-semibold text-orange-900">{{ $monthlyStats['qaza'] }}</p>
+                    </div>
+                    <div class="rounded-lg border border-rose-200 bg-rose-50 p-4">
+                        <p class="text-sm font-medium text-rose-700">Missed</p>
+                        <p class="mt-2 text-2xl font-semibold text-rose-900">{{ $monthlyStats['missed'] }}</p>
+                    </div>
+                </div>
+            </section>
         </div>
-
-        <div class="border rounded-lg p-4 text-center">
-            <p class="text-gray-500">On Time</p>
-            <h3 class="text-2xl font-bold text-green-600">{{ $monthlyStats['on_time'] }}</h3>
-        </div>
-
-        <div class="border rounded-lg p-4 text-center">
-            <p class="text-gray-500">Late</p>
-            <h3 class="text-2xl font-bold text-yellow-600">{{ $monthlyStats['late'] }}</h3>
-        </div>
-
-        <div class="border rounded-lg p-4 text-center">
-            <p class="text-gray-500">Qaza</p>
-            <h3 class="text-2xl font-bold text-orange-600">{{ $monthlyStats['qaza'] }}</h3>
-        </div>
-
-        <div class="border rounded-lg p-4 text-center">
-            <p class="text-gray-500">Missed</p>
-            <h3 class="text-2xl font-bold text-red-600">{{ $monthlyStats['missed'] }}</h3>
-        </div>
-
-        <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-gray-500">Current Streak</p>
-        <h2 class="text-3xl font-bold">
-            🔥 {{ $currentStreak }} Days
-        </h2>
     </div>
-
-    <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-gray-500">Best Streak</p>
-        <h2 class="text-3xl font-bold">
-            🏆 {{ $bestStreak }} Days
-        </h2>
-    </div>
-
-    </div>
-</div>
-
-    
-
-    
-
-    
-
-</div>
-</div>
 </x-app-layout>
